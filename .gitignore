@@ -1,0 +1,26 @@
+#Terraform working directory
+.terraform/
+
+#Terraform State
+*.tfstate
+*.tfstate.*
+
+#Terraform Plan
+
+*.tfplan
+tfplan
+
+#Sensitive
+*.tfvars
+*.tfvars.json
+
+#Crashlogs
+crash.log
+crash.*.log
+
+#local override files
+
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
