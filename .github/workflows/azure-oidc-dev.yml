@@ -28,3 +28,11 @@ jobs:
                   subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
             - name: Verify Azure Authentication
               run: az account show
+
+            - name: Verify Dev Container Access
+              run: |
+                  az storage blob list \
+                    --account-name az001sacapstone \
+                    --container-name az001sccapstonedev \
+                    --auth-mode login \
+                    --output table
