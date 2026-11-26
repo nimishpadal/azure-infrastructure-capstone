@@ -31,7 +31,7 @@ resource "azuread_application_federated_identity_credential" "dev_github_oidc" {
   application_id = azuread_application.app_registration["dev"].id
   audiences      = ["api://AzureADTokenExchange"]
   issuer         = "https://token.actions.githubusercontent.com"
-  subject        = "repo:nimishpadal/azure-infrastructure-capstone:environment:Dev"
+  subject        = "repo:nimishpadal@100749024/azure-infrastructure-capstone:environment:Dev"
 }
 
 resource "azuread_application_federated_identity_credential" "test_github_oidc" {
@@ -39,5 +39,5 @@ resource "azuread_application_federated_identity_credential" "test_github_oidc" 
   application_id = azuread_application.app_registration["test"].id
   audiences      = ["api://AzureADTokenExchange"]
   issuer         = "https://token.actions.githubusercontent.com"
-  subject        = "repo:nimishpadal/azure-infrastructure-capstone:environment:Test"
+  subject        = "repo:nimishpadal@100749024/azure-infrastructure-capstone:environment:Test"
 }
