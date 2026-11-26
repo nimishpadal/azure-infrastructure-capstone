@@ -36,10 +36,23 @@ jobs:
                     --container-name az001sccapstonedev \
                     --auth-mode login \
                     --output table
-            - name: Verify Test Container Access (expect a denial)
+
+            - name: Verify Dev Container Access (Expected Denial)
+              shell: bash
               run: |
-                  az storage blob list \
-                    --account-name az001sacapstone \
-                    --container-name az001sccapstonetest \
-                    --auth-mode login \
-                    --output table
+                  if output=$(az storage blob list \
+                      --account-name az001sacapstone \
+                      --container-name az001sccapstonetest \
+                      --auth-mode login \
+                      --output table 2>&1); then
+                      echo "::error::Dev identity unexpectedly accessed Test container!"
+                      exit 1
+                  else
+                      if [[ "$output" == *"You do not have the required permissions"* ]]; then
+                          echo "PASS: Dev identity correctly denied access to Test."
+                      else
+                          echo "::error::Unexpected failure while testing Test access."
+                          echo "$output"
+                          exit 1
+                      fi
+                  fi
