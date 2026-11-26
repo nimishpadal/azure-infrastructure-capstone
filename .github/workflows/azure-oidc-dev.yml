@@ -36,3 +36,10 @@ jobs:
                     --container-name az001sccapstonedev \
                     --auth-mode login \
                     --output table
+            - name: Verify Test Container Access (expect a denial)
+              run: |
+                  az storage blob list \
+                    --account-name az001sacapstone \
+                    --container-name az001sccapstonetest \
+                    --auth-mode login \
+                    --output table
