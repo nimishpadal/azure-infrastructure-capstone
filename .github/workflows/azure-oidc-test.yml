@@ -1,0 +1,58 @@
+name: Azure OIDC - Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature-networking
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  authenticate:
+    name: Authenticate to Azure - Test
+    runs-on: ubuntu-latest
+    environment: Test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID_TEST }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Verify Azure Authentication
+        run: az account show
+
+      - name: Verify Dev Container Access (Expected Denial)
+        shell: bash
+        run: |
+          if output=$(az storage blob list \
+            --account-name az001sacapstone \
+            --container-name az001sccapstonedev \
+            --auth-mode login \
+            --output table 2>&1); then
+              echo "::error::Test identity unexpectedly accessed Dev container!"
+              exit 1
+          else
+              if [[ "$output" == *"You do not have the required permissions"* ]]; then
+                  echo "PASS: Test identity correctly denied access to Dev."
+              else
+                  echo "::error::Unexpected failure while testing Dev access."
+                  echo "$output"
+                  exit 1
+              fi
+          fi
+
+      - name: Verify Test Container Access
+        run: |
+          az storage blob list \
+            --account-name az001sacapstone \
+            --container-name az001sccapstonetest \
+            --auth-mode login \
+            --output table

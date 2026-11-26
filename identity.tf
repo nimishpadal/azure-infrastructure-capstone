@@ -14,3 +14,30 @@ resource "azurerm_role_assignment" "rbac_assignments" {
   principal_type       = "ServicePrincipal"
   principal_id         = azuread_service_principal.service_principal[each.key].object_id
 }
+
+data "azuread_client_config" "current" {
+
+}
+
+resource "azurerm_role_assignment" "user_rbac_assignment" {
+  role_definition_name = "Storage Blob Data Contributor"
+  scope                = azurerm_storage_account.sa_capstone.id
+  principal_id         = data.azuread_client_config.current.object_id
+  principal_type       = "User"
+}
+
+resource "azuread_application_federated_identity_credential" "dev_github_oidc" {
+  display_name   = "github-dev-oidc"
+  application_id = azuread_application.app_registration["dev"].id
+  audiences      = ["api://AzureADTokenExchange"]
+  issuer         = "https://token.actions.githubusercontent.com"
+  subject        = "repo:nimishpadal@100749024/azure-infrastructure-capstone@1468376655:environment:Dev"
+}
+
+resource "azuread_application_federated_identity_credential" "test_github_oidc" {
+  display_name   = "github-test-oidc"
+  application_id = azuread_application.app_registration["test"].id
+  audiences      = ["api://AzureADTokenExchange"]
+  issuer         = "https://token.actions.githubusercontent.com"
+  subject        = "repo:nimishpadal@100749024/azure-infrastructure-capstone@1468376655:environment:Test"
+}
