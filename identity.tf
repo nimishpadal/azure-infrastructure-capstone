@@ -25,3 +25,19 @@ resource "azurerm_role_assignment" "user_rbac_assignment" {
   principal_id         = data.azuread_client_config.current.object_id
   principal_type       = "User"
 }
+
+resource "azuread_application_federated_identity_credential" "dev_github_oidc" {
+  display_name   = "github-dev-oidc"
+  application_id = azuread_application.app_registration["dev"].id
+  audiences      = ["api://AzureADTokenExchange"]
+  issuer         = "https://token.actions.githubusercontent.com"
+  subject        = "repo:nimishpadal/azure-infrastructure-capstone:environment:Dev"
+}
+
+resource "azuread_application_federated_identity_credential" "test_github_oidc" {
+  display_name   = "github-test-oidc"
+  application_id = azuread_application.app_registration["test"].id
+  audiences      = ["api://AzureADTokenExchange"]
+  issuer         = "https://token.actions.githubusercontent.com"
+  subject        = "repo:nimishpadal/azure-infrastructure-capstone:environment:Test"
+}

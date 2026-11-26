@@ -1,0 +1,30 @@
+name: Azure OIDC - Dev
+
+on:
+    workflow_dispatch:
+    push:
+        branches:
+            - feature-networking
+
+permissions:
+    contents: read
+    id-token: write
+
+jobs:
+    authenticate:
+        name: Authenticate to Azure - Dev
+        runs-on: ubuntu-latest
+        environment: Dev
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Azure Login
+              uses: azure/login@v2
+              with:
+                  client-id: ${{ vars.AZURE_CLIENT_ID_DEV }}
+                  tenant-id: ${{ vars.AZURE_TENANT_ID }}
+                  subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+            - name: Verify Azure Authentication
+              run: az account show
